@@ -1,0 +1,71 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lumi Ateliê — Loja demonstrativa</title><meta name="description" content="Projeto demonstrativo de loja virtual de semijoias e papelaria, por Ramiro Moura.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--rose:#c9827a;--ink:#3a2e2c;--bg:#fbf6f2;--card:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;background:var(--bg);color:var(--ink)}
+.demo{background:var(--ink);color:#fff;text-align:center;font-size:13px;padding:6px}
+.demo a{color:#f3c9c3}
+header{position:sticky;top:0;z-index:5;background:rgba(251,246,242,.95);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #eadcd5}
+.logo{font-family:'Playfair Display',serif;font-size:24px}.logo span{color:var(--rose)}
+.cartbtn{background:var(--rose);color:#fff;border:0;border-radius:99px;padding:9px 16px;font-weight:600;cursor:pointer}
+.hero{padding:44px 18px;text-align:center;background:linear-gradient(135deg,#f6e3dc,#fbf6f2 60%,#efe5f3)}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,46px);margin:0 0 8px}
+.hero p{margin:0 auto;max-width:520px;opacity:.8}
+.controls{max-width:1100px;margin:20px auto 0;padding:0 18px}
+.controls input{width:100%;padding:12px 16px;border-radius:99px;border:1px solid #e2d2ca;font-size:15px}
+.cats{display:flex;gap:8px;overflow-x:auto;padding:14px 0}
+.cats button{border:1px solid #e2d2ca;background:#fff;border-radius:99px;padding:8px 14px;cursor:pointer;white-space:nowrap}
+.cats button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.grid{max-width:1100px;margin:0 auto;padding:0 18px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px}
+.p{background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 4px 18px rgba(58,46,44,.07);display:flex;flex-direction:column}
+.p .img{aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.p .b{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.p small{color:var(--rose);font-weight:600;text-transform:uppercase;font-size:11px;letter-spacing:.06em}
+.p h3{margin:0;font-size:15px;font-weight:600}.p .pr{font-weight:600}
+.p button{margin-top:auto;border:0;background:var(--ink);color:#fff;border-radius:10px;padding:9px;cursor:pointer}
+aside{position:fixed;top:0;right:0;height:100%;width:min(380px,100%);background:#fff;box-shadow:-8px 0 30px rgba(0,0,0,.15);transform:translateX(105%);transition:.3s;z-index:10;display:flex;flex-direction:column}
+aside.open{transform:none}aside h2{margin:0;padding:18px;border-bottom:1px solid #eee;display:flex;justify-content:space-between}
+aside h2 button{border:0;background:none;font-size:22px;cursor:pointer}
+.items{flex:1;overflow:auto;padding:12px 18px}.it{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f2eae6;gap:8px}
+.it .q button{width:26px;height:26px;border-radius:50%;border:1px solid #ddd;background:#fff;cursor:pointer}
+.foot{padding:18px;border-top:1px solid #eee}.wa{display:block;width:100%;text-align:center;background:#25d366;color:#fff;text-decoration:none;padding:13px;border-radius:12px;font-weight:600;margin-top:10px}
+.empty{opacity:.6;text-align:center;padding:30px 0}
+</style></head><body>
+<div class="demo">Projeto demonstrativo — marca e produtos fictícios · <a href="../">voltar ao portfólio</a></div>
+<header><div class="logo">Lumi <span>Ateliê</span></div><button class="cartbtn" onclick="tog()">Sacola (<span id="cnt">0</span>)</button></header>
+<section class="hero"><h1>Delicadezas para o dia a dia</h1><p>Semijoias banhadas e papelaria afetiva, feitas para presentear (ou se presentear).</p></section>
+<div class="controls"><input id="q" placeholder="Buscar produtos..." oninput="render()"><div class="cats" id="cats"></div></div>
+<main class="grid" id="grid"></main>
+<aside id="cart"><h2>Sua sacola <button onclick="tog()">×</button></h2><div class="items" id="items"></div>
+<div class="foot"><div style="display:flex;justify-content:space-between;font-weight:600"><span>Total</span><span id="tot"></span></div>
+<a class="wa" id="wa" target="_blank" rel="noopener">Finalizar pelo WhatsApp</a><small style="display:block;margin-top:8px;opacity:.6">Número fictício de demonstração.</small></div></aside>
+<script>
+const WA='5500000000000';
+const C={Colares:['#e9c8a8','#c9a27a'],Brincos:['#f1d0d6','#c9827a'],Anéis:['#e4dcf1','#9b86c4'],Pulseiras:['#d8ebe4','#6fa58f'],Cadernos:['#f6e7c8','#d6a84f'],Adesivos:['#d6e6f5','#5f8fc0']};
+const shapes={Colares:'<path d="M50 70 Q100 150 150 70" fill="none" stroke="S" stroke-width="5"/><circle cx="100" cy="122" r="14" fill="S"/>',
+Brincos:'<circle cx="75" cy="80" r="8" fill="S"/><path d="M75 88 L62 130 H88Z" fill="S"/><circle cx="125" cy="80" r="8" fill="S"/><path d="M125 88 L112 130 H138Z" fill="S"/>',
+Anéis:'<circle cx="100" cy="110" r="34" fill="none" stroke="S" stroke-width="10"/><path d="M88 70 L100 55 L112 70 L100 82Z" fill="S"/>',
+Pulseiras:'<ellipse cx="100" cy="105" rx="52" ry="30" fill="none" stroke="S" stroke-width="8"/><circle cx="148" cy="105" r="8" fill="S"/>',
+Cadernos:'<rect x="62" y="50" width="76" height="100" rx="6" fill="S"/><rect x="62" y="50" width="12" height="100" fill="#fff" opacity=".4"/><path d="M90 90 h35 M90 105 h28" stroke="#fff" stroke-width="4"/>',
+Adesivos:'<path d="M100 55 l13 27 30 4 -22 21 6 30 -27 -15 -27 15 6 -30 -22 -21 30 -4z" fill="S"/>'};
+const img=c=>{const[a,s]=C[c];return 'data:image/svg+xml;utf8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="${a}"/>${shapes[c].replace(/S/g,s)}</svg>`)};
+const P=[['Colar Gota Dourada','Colares',89.9],['Colar Ponto de Luz','Colares',74.9],['Choker Pérolas Mini','Colares',99.9],['Brinco Argola Fina','Brincos',49.9],['Brinco Gotinha Rosé','Brincos',59.9],['Ear Cuff Estrelas','Brincos',44.9],['Anel Solitário Zircônia','Anéis',69.9],['Anel Aparador Trio','Anéis',79.9],['Pulseira Elos Delicados','Pulseiras',64.9],['Pulseira Riviera','Pulseiras',119.9],['Caderno Pontilhado A5','Cadernos',39.9],['Planner Semanal Floral','Cadernos',54.9],['Cartela Adesivos Botânicos','Adesivos',14.9],['Kit Adesivos Planner','Adesivos',24.9]].map((p,i)=>({id:i,n:p[0],c:p[1],v:p[2]}));
+const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+let cat='Todos',cart=JSON.parse(localStorage.getItem('lumi-cart')||'{}');
+const cats=['Todos',...Object.keys(C)];
+document.getElementById('cats').innerHTML=cats.map(c=>`<button onclick="cat='${c}';render()">${c}</button>`).join('');
+function render(){const q=document.getElementById('q').value.toLowerCase();
+[...document.querySelectorAll('.cats button')].forEach(b=>b.classList.toggle('on',b.textContent==cat));
+const l=P.filter(p=>(cat=='Todos'||p.c==cat)&&p.n.toLowerCase().includes(q));
+document.getElementById('grid').innerHTML=l.length?l.map(p=>`<div class="p"><div class="img"><img src="${img(p.c)}" alt="${p.n}" width="100%"></div><div class="b"><small>${p.c}</small><h3>${p.n}</h3><div class="pr">${brl(p.v)}</div><button onclick="add(${p.id})">Adicionar</button></div></div>`).join(''):'<p class="empty">Nenhum produto encontrado.</p>';drawCart()}
+function add(id){cart[id]=(cart[id]||0)+1;save()}function chg(id,d){cart[id]+=d;if(cart[id]<=0)delete cart[id];save()}
+function save(){localStorage.setItem('lumi-cart',JSON.stringify(cart));drawCart()}
+function tog(){document.getElementById('cart').classList.toggle('open')}
+function drawCart(){const e=Object.entries(cart);let t=0,n=0;
+document.getElementById('items').innerHTML=e.length?e.map(([id,q])=>{const p=P[id];t+=p.v*q;n+=q;return `<div class="it"><div><b>${p.n}</b><br><small>${brl(p.v)}</small></div><div class="q"><button onclick="chg(${id},-1)">−</button> ${q} <button onclick="chg(${id},1)">+</button></div></div>`}).join(''):'<p class="empty">Sua sacola está vazia.</p>';
+document.getElementById('cnt').textContent=n;document.getElementById('tot').textContent=brl(t);
+const msg='Olá! Quero finalizar meu pedido:\n'+e.map(([id,q])=>`${q}x ${P[id].n} — ${brl(P[id].v*q)}`).join('\n')+`\nTotal: ${brl(t)}`;
+document.getElementById('wa').href=`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`}
+render();
+</script></body></html>
